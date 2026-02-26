@@ -1,0 +1,463 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id                                         Int                 @id
+  title                                      String?
+  slug                                       String?
+  date                                       DateTime?           @db.Timestamp(6)
+  status                                     String?
+  author                                     String?
+  content                                    String?
+  excerpt                                    String?
+  categories                                 String?
+  tags                                       String?
+  attributes_product_tag                     String?
+  attributes_product_cat                     String?
+  attributes_product_type                    String?
+  featuredImage_url                          String?
+  featuredImage_alt                          String?
+  seo_title                                  String?
+  seo_description                            String?
+  seo_keywords                               String?
+  seo_ogTitle                                String?
+  seo_ogDescription                          String?
+  seo_ogImage                                String?
+  seo_twitterTitle                           String?
+  seo_twitterDescription                     String?
+  seo_twitterImage                           String?
+  seo_canonical                              String?
+  seo_robots                                 String?
+  metadata__sku                              String?
+  metadata_total_sales                       Int?
+  metadata__tax_status                       String?
+  metadata__tax_class                        String?
+  metadata__manage_stock                     String?
+  metadata__backorders                       String?
+  metadata__sold_individually                String?
+  metadata__virtual                          String?
+  metadata__downloadable                     String?
+  metadata__download_limit                   Int?
+  metadata__download_expiry                  String?
+  metadata__stock                            Int?
+  metadata__stock_status                     String?
+  metadata__wc_average_rating                Decimal?            @db.Decimal
+  metadata__wc_review_count                  Int?
+  metadata__wp_old_slug                      String?
+  metadata__regular_price                    Decimal?            @db.Decimal
+  metadata__low_stock_amount                 Int?
+  metadata__product_attributes               String?
+  metadata__price                            Decimal?            @db.Decimal
+  metadata__visibility                       String?
+  metadata__thumbnail_id                     Int?
+  metadata__wp_page_template                 String?
+  metadata__product_image_gallery            String?
+  metadata__aioseo_keywords                  String?
+  metadata__aioseo_og_article_section        String?
+  metadata__aioseo_og_article_tags           String?
+  metadata_inline_featured_image             String?
+  metadata__yoast_wpseo_focuskw              String?
+  metadata__yoast_wpseo_title                String?
+  metadata__yoast_wpseo_metadesc             String?
+  metadata_rank_math_title                   String?
+  metadata_rank_math_description             String?
+  metadata_rank_math_focus_keyword           String?
+  metadata_rank_math_news_sitemap_robots     String?
+  metadata_rank_math_robots                  String?
+  price                                      Decimal?            @db.Decimal
+  regularPrice                               Decimal?            @db.Decimal
+  sku                                        String?
+  stockStatus                                String?
+  gallery                                    String?
+  schema__context                            String?             @map("schema_@context")
+  schema__type                               String?             @map("schema_@type")
+  schema_name                                String?
+  schema_image                               String?
+  schema_description                         String?
+  schema_sku                                 String?
+  schema_offers__type                        String?             @map("schema_offers_@type")
+  schema_offers_url                          String?
+  schema_offers_priceCurrency                String?
+  schema_offers_price                        Decimal?            @db.Decimal
+  schema_offers_availability                 String?
+  attributes_product_visibility              String?
+  metadata__yoast_wpseo_meta_robots_noindex  String?
+  metadata__yoast_wpseo_meta_robots_nofollow String?
+  featuredImage                              String?
+  attributes_pa_compatibility                String?
+  metadata__yoast_wpseo_primary_product_cat  String?
+  metadata_rank_math_primary_product_cat     String?
+  metadata__yoast_wpseo_canonical            String?
+  metadata_rank_math_canonical_url           String?
+  metadata__aioseo_title                     String?
+  metadata__aioseo_description               String?
+  metadata__aioseo_og_title                  String?
+  metadata__aioseo_og_description            String?
+  metadata__aioseo_twitter_title             String?
+  metadata__aioseo_twitter_description       String?
+  metadata__redparts_featured_attributes     String?
+  link                                       String?
+  pubDate                                    DateTime?           @db.Timestamp(6)
+  creator                                    String?
+  guid                                       Json?
+  post_date                                  DateTime?           @db.Timestamp(6)
+  post_date_gmt                              DateTime?           @db.Timestamp(6)
+  post_modified                              DateTime?           @db.Timestamp(6)
+  post_modified_gmt                          DateTime?           @db.Timestamp(6)
+  post_name                                  String?
+  post_parent                                Int?
+  menu_order                                 Int?
+  post_type                                  String?
+  post_password                              String?
+  is_sticky                                  Int?
+  post_id                                    Int?
+  products_comments                          products_comments[]
+  products_meta                              products_meta[]
+  products_terms                             products_terms[]
+
+  @@map("products")
+}
+
+model BlogPost {
+  id                                         Int                @id
+  title                                      String?
+  slug                                       String?
+  date                                       DateTime?          @db.Timestamp(6)
+  status                                     String?
+  author                                     String?
+  content                                    String?
+  excerpt                                    String?
+  link                                       String?
+  pubDate                                    DateTime?          @db.Timestamp(6)
+  creator                                    String?
+  guid                                       Json?
+  post_date                                  DateTime?          @db.Timestamp(6)
+  post_date_gmt                              DateTime?          @db.Timestamp(6)
+  post_modified                              DateTime?          @db.Timestamp(6)
+  post_modified_gmt                          DateTime?          @db.Timestamp(6)
+  post_name                                  String?
+  post_parent                                Int?
+  menu_order                                 Int?
+  post_type                                  String?
+  post_password                              String?
+  is_sticky                                  Int?
+  post_id                                    Int?
+  seo_title                                  String?
+  seo_description                            String?
+  seo_keywords                               String?
+  seo_ogTitle                                String?
+  seo_ogDescription                          String?
+  seo_ogImage                                String?
+  seo_twitterTitle                           String?
+  seo_twitterDescription                     String?
+  seo_twitterImage                           String?
+  seo_canonical                              String?
+  seo_robots                                 String?
+  metadata__yoast_wpseo_focuskw              String?
+  metadata__yoast_wpseo_title                String?
+  metadata__yoast_wpseo_metadesc             String?
+  metadata__yoast_wpseo_meta_robots_noindex  String?
+  metadata__yoast_wpseo_meta_robots_nofollow String?
+  metadata__yoast_wpseo_primary_product_cat  String?
+  metadata__yoast_wpseo_canonical            String?
+  metadata_rank_math_title                   String?
+  metadata_rank_math_description             String?
+  metadata_rank_math_focus_keyword           String?
+  metadata_rank_math_news_sitemap_robots     String?
+  metadata_rank_math_robots                  String?
+  metadata_rank_math_primary_product_cat     String?
+  metadata_rank_math_canonical_url           String?
+  metadata__aioseo_keywords                  String?
+  metadata__aioseo_og_article_section        String?
+  metadata__aioseo_og_article_tags           String?
+  metadata__aioseo_title                     String?
+  metadata__aioseo_description               String?
+  metadata__aioseo_og_title                  String?
+  metadata__aioseo_og_description            String?
+  metadata__aioseo_twitter_title             String?
+  metadata__aioseo_twitter_description       String?
+  blog_posts_meta                            blog_posts_meta[]
+  blog_posts_terms                           blog_posts_terms[]
+
+  @@map("blog_posts")
+}
+
+model authors {
+  author_id           Int     @id
+  author_login        String  @unique
+  author_email        String?
+  author_display_name String?
+  author_first_name   String?
+  author_last_name    String?
+}
+
+model blog_posts_meta {
+  id         Int       @id @default(autoincrement())
+  post_id    Int?
+  meta_key   String?
+  meta_value String?
+  blog_posts BlogPost? @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model blog_posts_terms {
+  id         Int       @id @default(autoincrement())
+  post_id    Int?
+  term_slug  String?
+  taxonomy   String?
+  blog_posts BlogPost? @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model infrastructure {
+  id                   Int                    @id
+  title                String?
+  slug                 String?
+  date                 DateTime?              @db.Timestamp(6)
+  status               String?
+  author               String?
+  content              String?
+  excerpt              String?
+  link                 String?
+  pubDate              DateTime?              @db.Timestamp(6)
+  creator              String?
+  guid                 Json?
+  post_date            DateTime?              @db.Timestamp(6)
+  post_date_gmt        DateTime?              @db.Timestamp(6)
+  post_modified        DateTime?              @db.Timestamp(6)
+  post_modified_gmt    DateTime?              @db.Timestamp(6)
+  post_name            String?
+  post_parent          Int?
+  menu_order           Int?
+  post_type            String?
+  post_password        String?
+  is_sticky            Int?
+  post_id              Int?
+  infrastructure_meta  infrastructure_meta[]
+  infrastructure_terms infrastructure_terms[]
+}
+
+model infrastructure_terms {
+  id             Int             @id @default(autoincrement())
+  post_id        Int?
+  term_slug      String?
+  taxonomy       String?
+  infrastructure infrastructure? @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model media {
+  id                Int          @id
+  title             String?
+  slug              String?
+  date              DateTime?    @db.Timestamp(6)
+  status            String?
+  author            String?
+  content           String?
+  excerpt           String?
+  link              String?
+  pubDate           DateTime?    @db.Timestamp(6)
+  creator           String?
+  guid              Json?
+  post_date         DateTime?    @db.Timestamp(6)
+  post_date_gmt     DateTime?    @db.Timestamp(6)
+  post_modified     DateTime?    @db.Timestamp(6)
+  post_modified_gmt DateTime?    @db.Timestamp(6)
+  post_name         String?
+  post_parent       Int?
+  menu_order        Int?
+  post_type         String?
+  post_password     String?
+  is_sticky         Int?
+  post_id           Int?
+  alt_text          String?
+  attached_file     String?
+  media_meta        media_meta[]
+}
+
+model media_meta {
+  id         Int     @id @default(autoincrement())
+  post_id    Int?
+  meta_key   String?
+  meta_value String?
+  media      media?  @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([post_id], map: "idx_media_meta_post_id")
+}
+
+model orders {
+  id                Int           @id
+  title             String?
+  slug              String?
+  date              DateTime?     @db.Timestamp(6)
+  status            String?
+  author            String?
+  content           String?
+  excerpt           String?
+  link              String?
+  pubDate           DateTime?     @db.Timestamp(6)
+  creator           String?
+  guid              Json?
+  post_date         DateTime?     @db.Timestamp(6)
+  post_date_gmt     DateTime?     @db.Timestamp(6)
+  post_modified     DateTime?     @db.Timestamp(6)
+  post_modified_gmt DateTime?     @db.Timestamp(6)
+  post_name         String?
+  post_parent       Int?
+  menu_order        Int?
+  post_type         String?
+  post_password     String?
+  is_sticky         Int?
+  post_id           Int?
+  orders_meta       orders_meta[]
+}
+
+model orders_meta {
+  id         Int     @id @default(autoincrement())
+  post_id    Int?
+  meta_key   String?
+  meta_value String?
+  orders     orders? @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([post_id], map: "idx_orders_meta_post_id")
+}
+
+model pages {
+  id                                         Int          @id
+  title                                      String?
+  slug                                       String?
+  date                                       DateTime?    @db.Timestamp(6)
+  status                                     String?
+  author                                     String?
+  content                                    String?
+  excerpt                                    String?
+  link                                       String?
+  pubDate                                    DateTime?    @db.Timestamp(6)
+  creator                                    String?
+  guid                                       Json?
+  post_date                                  DateTime?    @db.Timestamp(6)
+  post_date_gmt                              DateTime?    @db.Timestamp(6)
+  post_modified                              DateTime?    @db.Timestamp(6)
+  post_modified_gmt                          DateTime?    @db.Timestamp(6)
+  post_name                                  String?
+  post_parent                                Int?
+  menu_order                                 Int?
+  post_type                                  String?
+  post_password                              String?
+  is_sticky                                  Int?
+  post_id                                    Int?
+  seo_title                                  String?
+  seo_description                            String?
+  seo_keywords                               String?
+  seo_ogTitle                                String?
+  seo_ogDescription                          String?
+  seo_ogImage                                String?
+  seo_twitterTitle                           String?
+  seo_twitterDescription                     String?
+  seo_twitterImage                           String?
+  seo_canonical                              String?
+  seo_robots                                 String?
+  metadata__yoast_wpseo_focuskw              String?
+  metadata__yoast_wpseo_title                String?
+  metadata__yoast_wpseo_metadesc             String?
+  metadata__yoast_wpseo_meta_robots_noindex  String?
+  metadata__yoast_wpseo_meta_robots_nofollow String?
+  metadata__yoast_wpseo_primary_product_cat  String?
+  metadata__yoast_wpseo_canonical            String?
+  metadata_rank_math_title                   String?
+  metadata_rank_math_description             String?
+  metadata_rank_math_focus_keyword           String?
+  metadata_rank_math_news_sitemap_robots     String?
+  metadata_rank_math_robots                  String?
+  metadata_rank_math_primary_product_cat     String?
+  metadata_rank_math_canonical_url           String?
+  metadata__aioseo_keywords                  String?
+  metadata__aioseo_og_article_section        String?
+  metadata__aioseo_og_article_tags           String?
+  metadata__aioseo_title                     String?
+  metadata__aioseo_description               String?
+  metadata__aioseo_og_title                  String?
+  metadata__aioseo_og_description            String?
+  metadata__aioseo_twitter_title             String?
+  metadata__aioseo_twitter_description       String?
+  pages_meta                                 pages_meta[]
+}
+
+model pages_meta {
+  id         Int     @id @default(autoincrement())
+  post_id    Int?
+  meta_key   String?
+  meta_value String?
+  pages      pages?  @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([post_id], map: "idx_pages_meta_post_id")
+}
+
+model products_comments {
+  comment_id   Int       @id
+  post_id      Int?
+  author       String?
+  author_email String?
+  author_url   String?
+  author_IP    String?
+  date         DateTime? @db.Timestamp(6)
+  date_gmt     DateTime? @db.Timestamp(6)
+  content      String?
+  approved     String?
+  type         String?
+  parent       Int?
+  user_id      Int?
+  products     Product?  @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model products_meta {
+  id         Int      @id @default(autoincrement())
+  post_id    Int?
+  meta_key   String?
+  meta_value String?
+  products   Product? @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([post_id], map: "idx_products_meta_post_id")
+}
+
+model products_terms {
+  id        Int      @id @default(autoincrement())
+  post_id   Int?
+  term_slug String?
+  taxonomy  String?
+  products  Product? @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([post_id], map: "idx_products_terms_post_id")
+}
+
+model term_meta {
+  id         Int     @id @default(autoincrement())
+  term_id    Int?
+  meta_key   String?
+  meta_value String?
+  terms      terms?  @relation(fields: [term_id], references: [term_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([term_id], map: "idx_term_meta_term_id")
+}
+
+model terms {
+  term_id   Int         @id
+  taxonomy  String
+  slug      String
+  name      String?
+  parent    Int?
+  term_meta term_meta[]
+
+  @@unique([slug, taxonomy])
+}
+
+model infrastructure_meta {
+  id             Int             @id @default(autoincrement())
+  post_id        Int?
+  meta_key       String?
+  meta_value     String?
+  infrastructure infrastructure? @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
