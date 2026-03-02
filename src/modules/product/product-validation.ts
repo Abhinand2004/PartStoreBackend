@@ -30,3 +30,9 @@ export const searchProductsSchema = z.object({
     }),
 });
 
+export const getLatestProductsSchema = z.object({
+    query: z.object({
+        category: z.string().optional(),
+    }),
+});
+

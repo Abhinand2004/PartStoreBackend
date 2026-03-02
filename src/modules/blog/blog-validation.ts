@@ -34,3 +34,9 @@ export const getBlogPostsSchema = z.object({
         tag: z.string().optional(),
     }),
 });
+
+export const getLatestBlogsSchema = z.object({
+    query: z.object({
+        brandId: z.string().regex(/^\d+$/, 'Brand ID must be a numeric string').optional(),
+    }),
+});

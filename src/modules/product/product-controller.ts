@@ -35,12 +35,27 @@ export const getProducts = async (req: Request, res: Response) => {
         slug: true,
         content: true,
         excerpt: true,
+        price: true,
+        featuredImage_url: true,
         seo_title: true,
         seo_description: true,
       },
       take: 50, // Added take limit for performance
     });
-    res.json(products);
+
+    const mappedProducts = products.map(p => ({
+      id: p.id,
+      slug: p.slug,
+      name: p.title,
+      content: p.content,
+      excerpt: p.excerpt,
+      price: p.price,
+      image: p.featuredImage_url,
+      seo_title: p.seo_title,
+      seo_description: p.seo_description,
+    }));
+
+    res.json(mappedProducts);
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }
@@ -51,7 +66,7 @@ export const getProducts = async (req: Request, res: Response) => {
 // @access  Public
 export const getProductBySlug = async (req: Request, res: Response) => {
   try {
-    const product = await prisma.product.findUnique({
+    const product = await prisma.product.findFirst({
       where: { slug: req.params.slug as string },
     });
 
@@ -147,6 +162,66 @@ export const createProduct = async (req: Request, res: Response) => {
     res.status(201).json(product);
   } catch (error) {
     res.status(400).json({ message: (error as Error).message });
+  }
+};
+
+// @desc    Fetch latest products (optionally by category)
+// @route   GET /api/v1/products/latest
+// @access  Public
+export const getLatestProducts = async (req: Request, res: Response) => {
+  try {
+    const categoryId = req.query.category as string | undefined;
+    let whereClause = {};
+
+    if (categoryId) {
+      let filterSlug = categoryId;
+      if (/^\d+$/.test(categoryId)) {
+        // Resolve category ID to slug in 'product_cat' taxonomy
+        const term = await prisma.terms.findUnique({
+          where: { term_id: Number(categoryId) }
+        });
+
+        if (term) {
+          filterSlug = term.slug;
+        }
+      }
+
+      whereClause = {
+        products_terms: {
+          some: {
+            term_slug: filterSlug,
+            taxonomy: 'product_cat'
+          }
+        }
+      };
+    }
+
+    const products = await prisma.product.findMany({
+      where: whereClause,
+      orderBy: {
+        date: 'desc',
+      },
+      take: 5,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        price: true,
+        featuredImage_url: true,
+      },
+    });
+
+    const mappedProducts = products.map(p => ({
+      id: p.id,
+      slug: p.slug,
+      name: p.title,
+      price: p.price,
+      image: p.featuredImage_url,
+    }));
+
+    res.json(mappedProducts);
+  } catch (error) {
+    res.status(500).json({ message: (error as Error).message });
   }
 };
 

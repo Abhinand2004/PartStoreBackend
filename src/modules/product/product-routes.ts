@@ -1,12 +1,13 @@
 import express from 'express';
-import { getProducts, getProductBySlug, getProductById, createProduct, getBestSellers, searchProducts } from './product-controller.js';
+import { getProducts, getProductBySlug, getProductById, createProduct, getBestSellers, searchProducts, getLatestProducts } from './product-controller.js';
 import { protect, admin } from '../../middleware/auth-middleware.js';
 import { validate } from '../../middleware/validate-middleware.js';
-import { createProductSchema, getProductBySlugSchema, getProductByIdSchema, searchProductsSchema } from './product-validation.js';
+import { createProductSchema, getProductBySlugSchema, getProductByIdSchema, searchProductsSchema, getLatestProductsSchema } from './product-validation.js';
 
 const router = express.Router();
 
 router.route('/best-sellers').get(getBestSellers);
+router.route('/latest').get(validate(getLatestProductsSchema), getLatestProducts);
 router.route('/search').get(validate(searchProductsSchema), searchProducts);
 
 router

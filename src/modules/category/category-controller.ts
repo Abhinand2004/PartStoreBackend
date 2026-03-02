@@ -6,19 +6,40 @@ import prisma from '../../config/db.js';
 // @access  Public
 export const getCategories = async (req: Request, res: Response) => {
   try {
-    // 1. Fetch all product categories
-    const allCategories = await prisma.terms.findMany({
+    // 1. Fetch all terms that could be categories
+    // We fetch all product_cat terms, but also potentially their parents from other taxonomies
+    const allProductCats = await prisma.terms.findMany({
       where: { taxonomy: 'product_cat' }
     });
 
-    // 2. Fetch thumbnail metadata for these categories
-    const termIds = allCategories.map(cat => cat.term_id);
-    const thumbnails = await prisma.term_meta.findMany({
+    const categoryMap = new Map();
+    const allTermIds = new Set(allProductCats.map(cat => cat.term_id));
+
+    // Identify potential parents from other taxonomies (e.g., product_tag)
+    const externalParentIds = [...new Set(
+      allProductCats
+        .map(cat => cat.parent)
+        .filter((id): id is number => id !== null && !allTermIds.has(id))
+    )];
+
+    let externalParents: any[] = [];
+    if (externalParentIds.length > 0) {
+      externalParents = await prisma.terms.findMany({
+        where: { term_id: { in: externalParentIds } }
+      });
+    }
+
+    // 2. Fetch thumbnail and product count metadata for all found terms
+    const termIds = [...allTermIds, ...externalParentIds];
+    const metaEntries = await prisma.term_meta.findMany({
       where: {
         term_id: { in: termIds },
-        meta_key: 'thumbnail_id'
+        meta_key: { in: ['thumbnail_id', 'product_count_product_cat'] }
       }
     });
+
+    const thumbnails = metaEntries.filter(m => m.meta_key === 'thumbnail_id');
+    const productCounts = metaEntries.filter(m => m.meta_key === 'product_count_product_cat');
 
     // 3. Fetch media files for the thumbnails
     const mediaIds = thumbnails
@@ -30,10 +51,7 @@ export const getCategories = async (req: Request, res: Response) => {
       select: { id: true, attached_file: true }
     });
 
-    // Create a map for quick media lookup
     const mediaMap = new Map(mediaFiles.map(m => [m.id, m.attached_file]));
-
-    // Create a map for term -> image URL lookup
     const termImageMap = new Map();
     thumbnails.forEach(t => {
       const mediaId = parseInt(t.meta_value || '0');
@@ -42,59 +60,90 @@ export const getCategories = async (req: Request, res: Response) => {
       }
     });
 
-    // 4. Fetch products associated with these categories
-    const categorySlugs = allCategories
-      .map(cat => cat.slug)
-      .filter((slug): slug is string => slug !== null);
+    const termCountMap = new Map();
+    productCounts.forEach(pc => {
+      termCountMap.set(pc.term_id, parseInt(pc.meta_value || '0'));
+    });
 
-    const categoryProducts = await prisma.products_terms.findMany({
-      where: {
-        taxonomy: 'product_cat',
-        term_slug: { in: categorySlugs }
-      },
-      select: {
-        term_slug: true,
-        products: {
-          select: {
-            title: true
-          }
-        }
+    // 4. (Removed product fetching logic - no longer needed)
+
+    // 5. Build lookup maps for re-parenting
+    // Some product_cat terms point to a product_tag parent with the same name.
+    // We map those tag IDs to the corresponding product_cat IDs using case-insensitive name matching or slug matching.
+    const tagToCatMap = new Map<number, number>();
+    externalParents.forEach(parent => {
+      const parentNameLower = parent.name?.toLowerCase();
+      const parentSlug = parent.slug?.toLowerCase();
+
+      const matchingCat = allProductCats.find(c =>
+        (c.name?.toLowerCase() === parentNameLower) ||
+        (c.slug?.toLowerCase() === parentSlug)
+      );
+
+      if (matchingCat) {
+        tagToCatMap.set(parent.term_id, matchingCat.term_id);
       }
     });
 
-    // Create a map of term_slug -> array of product names
-    const categoryProductMap = new Map<string, string[]>();
-    categoryProducts.forEach(cp => {
-      if (cp.term_slug && cp.products?.title) {
-        const names = categoryProductMap.get(cp.term_slug) || [];
-        if (!names.includes(cp.products.title)) {
-          names.push(cp.products.title);
-        }
-        categoryProductMap.set(cp.term_slug, names);
-      }
-    });
-
-    // 5. Build the hierarchical tree
-    const categoryMap = new Map();
-
-    // Initialize all categories in the map
-    allCategories.forEach(cat => {
+    // 6. Initialize all categories in the map
+    allProductCats.forEach(cat => {
       categoryMap.set(cat.term_id, {
-        ...cat,
+        term_id: cat.term_id,
+        name: cat.name?.replace(/&amp;/g, '&'), // Clean HTML entities
+        slug: cat.slug,
+        parent: cat.parent,
+        count: termCountMap.get(cat.term_id) || 0,
         image: termImageMap.get(cat.term_id) || null,
-        productNames: cat.slug ? (categoryProductMap.get(cat.slug) || []) : [],
-        subcategories: []
+        subcategories: [] // Initialize empty subcategories array
       });
+    });
+
+    // 7. Build hierarchy and collect root categories
+    allProductCats.forEach(cat => {
+      const catData = categoryMap.get(cat.term_id);
+      let parentId = cat.parent;
+
+      // Re-parent if the parent is a tag that has a category equivalent
+      if (parentId !== null && tagToCatMap.has(parentId)) {
+        parentId = tagToCatMap.get(parentId)!;
+        catData.parent = parentId;
+      }
+
+      // If we have a valid parent within our category map, add this as a subcategory
+      if (parentId !== null && categoryMap.has(parentId)) {
+        const parentData = categoryMap.get(parentId);
+        parentData.subcategories.push(catData);
+      }
     });
 
     const rootCategories: any[] = [];
 
-    allCategories.forEach(cat => {
-      const catWithSubs = categoryMap.get(cat.term_id);
-      if (cat.parent && categoryMap.has(cat.parent)) {
-        categoryMap.get(cat.parent).subcategories.push(catWithSubs);
-      } else {
-        rootCategories.push(catWithSubs);
+    // 8. Collect final root categories (active categories with no active parents)
+    allProductCats.forEach(cat => {
+      const catData = categoryMap.get(cat.term_id);
+      const parentId = catData.parent;
+
+      // Check if it's a root category (no parent or parent not in our category system)
+      if (parentId === null || !categoryMap.has(parentId)) {
+        // Filter subcategories: only count > 0 and map specific fields
+        const filteredSubcategories = catData.subcategories
+          .filter((sub: any) => sub.count > 0)
+          .map((sub: any) => ({
+            id: sub.term_id,
+            name: sub.name,
+            slug: sub.slug
+          }));
+
+        // Update catData with filtered subcategories
+        const finalCatData = {
+          ...catData,
+          subcategories: filteredSubcategories
+        };
+
+        // Only include root categories that have a product count > 0 or have active subcategories
+        if (finalCatData.count > 0 || finalCatData.subcategories.length > 0) {
+          rootCategories.push(finalCatData);
+        }
       }
     });
 

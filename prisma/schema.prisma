@@ -159,6 +159,34 @@ model BlogPost {
   seo_twitterImage                           String?
   seo_canonical                              String?
   seo_robots                                 String?
+  categories                                 String?
+  tags                                       String?
+  attributes_category                        String?
+  attributes_post_tag                        String?
+  featuredImage_url                          String?
+  featuredImage_alt                          String?
+  featuredImage                              String?
+  metadata_inline_featured_image             String?
+  metadata__thumbnail_id                     Int?
+  metadata__wp_page_template                 String?
+  metadata__elementor_template_type          String?
+  metadata__elementor_data                   String?
+  metadata__yoast_wpseo_primary_category     String?
+  metadata_rank_math_primary_category        String?
+  schema__context                            String?            @map("schema_@context")
+  schema__type                               String?            @map("schema_@type")
+  schema_headline                            String?
+  schema_image_url                           String?
+  schema_image_alt                           String?
+  schema_datePublished                       DateTime?          @db.Timestamp(6)
+  schema_author__type                        String?            @map("schema_author_@type")
+  schema_author_name                         String?
+  schema_publisher__type                     String?            @map("schema_publisher_@type")
+  schema_publisher_name                      String?
+  schema_publisher_logo__type                String?            @map("schema_publisher_logo_@type")
+  schema_publisher_logo_url                  String?
+  schema_mainEntityOfPage__type              String?            @map("schema_mainEntityOfPage_@type")
+  schema_mainEntityOfPage__id                String?            @map("schema_mainEntityOfPage_@id")
   metadata__yoast_wpseo_focuskw              String?
   metadata__yoast_wpseo_title                String?
   metadata__yoast_wpseo_metadesc             String?
@@ -360,6 +388,19 @@ model pages {
   seo_twitterImage                           String?
   seo_canonical                              String?
   seo_robots                                 String?
+  featuredImage_url                          String?
+  featuredImage_alt                          String?
+  featuredImage                              String?
+  metadata_inline_featured_image             String?
+  metadata__thumbnail_id                     Int?
+  metadata__wp_page_template                 String?
+  metadata__elementor_template_type          String?
+  metadata__elementor_data                   String?
+  schema__context                            String?      @map("schema_@context")
+  schema__type                               String?      @map("schema_@type")
+  schema_name                                String?
+  schema_description                         String?
+  schema_image                               String?
   metadata__yoast_wpseo_focuskw              String?
   metadata__yoast_wpseo_title                String?
   metadata__yoast_wpseo_metadesc             String?
